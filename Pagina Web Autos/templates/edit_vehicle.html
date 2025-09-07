@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Vehículo - AutoMarket Argentina{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-6 fw-bold">
+                        <i class="fas fa-edit me-3 text-warning"></i>Editar Vehículo
+                    </h1>
+                    <p class="text-muted">Modifica la información del vehículo</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left me-2"></i>Volver al Panel
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger" 
+                       onclick="return confirm('¿Estás seguro de que quieres cerrar sesión?')">
+                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <div class="row">
+            <!-- Basic Information -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Información Básica
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label for="title" class="form-label">
+                                    <i class="fas fa-heading me-2"></i>Título del Anuncio *
+                                </label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       value="{{ vehicle.title }}" required>
+                                <div class="invalid-feedback">Por favor ingresa un título.</div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="price" class="form-label">
+                                    <i class="fas fa-dollar-sign me-2"></i>Precio *
+                                </label>
+                                <input type="number" class="form-control" id="price" name="price" 
+                                       value="{{ vehicle.price }}" min="1" required>
+                                <div class="invalid-feedback">Por favor ingresa un precio válido.</div>
+                            </div>
+                            
+                            <div class="col-md-2 mb-3">
+                                <label for="currency" class="form-label">
+                                    <i class="fas fa-coins me-2"></i>Moneda *
+                                </label>
+                                <select class="form-select" id="currency" name="currency" required>
+                                    <option value="ARS" {{ "selected" if vehicle.currency == "ARS" else "" }}>ARS</option>
+                                    <option value="USD" {{ "selected" if vehicle.currency == "USD" else "" }}>USD</option>
+                                </select>
+                                <div class="invalid-feedback">Selecciona la moneda.</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="year" class="form-label">
+                                    <i class="fas fa-calendar me-2"></i>Año
+                                </label>
+                                <input type="number" class="form-control" id="year" name="year" 
+                                       value="{{ vehicle.year or '' }}" min="1900" max="2025">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="brand" class="form-label">
+                                    <i class="fas fa-tag me-2"></i>Marca
+                                </label>
+                                <input type="text" class="form-control" id="brand" name="brand" 
+                                       value="{{ vehicle.brand or '' }}">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="model" class="form-label">
+                                    <i class="fas fa-car me-2"></i>Modelo
+                                </label>
+                                <input type="text" class="form-control" id="model" name="model" 
+                                       value="{{ vehicle.model or '' }}">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="kilometers" class="form-label">
+                                    <i class="fas fa-road me-2"></i>Kilómetros
+                                </label>
+                                <input type="number" class="form-control" id="kilometers" name="kilometers" 
+                                       value="{{ vehicle.kilometers or '' }}" min="0">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="fuel_type" class="form-label">
+                                    <i class="fas fa-gas-pump me-2"></i>Combustible
+                                </label>
+                                <select class="form-select" id="fuel_type" name="fuel_type">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="Nafta" {% if vehicle.fuel_type == 'Nafta' %}selected{% endif %}>Nafta</option>
+                                    <option value="Diesel" {% if vehicle.fuel_type == 'Diesel' %}selected{% endif %}>Diesel</option>
+                                    <option value="GNC" {% if vehicle.fuel_type == 'GNC' %}selected{% endif %}>GNC</option>
+                                    <option value="Híbrido" {% if vehicle.fuel_type == 'Híbrido' %}selected{% endif %}>Híbrido</option>
+                                    <option value="Eléctrico" {% if vehicle.fuel_type == 'Eléctrico' %}selected{% endif %}>Eléctrico</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="transmission" class="form-label">
+                                    <i class="fas fa-cogs me-2"></i>Transmisión
+                                </label>
+                                <select class="form-select" id="transmission" name="transmission">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="Manual" {% if vehicle.transmission == 'Manual' %}selected{% endif %}>Manual</option>
+                                    <option value="Automática" {% if vehicle.transmission == 'Automática' %}selected{% endif %}>Automática</option>
+                                    <option value="CVT" {% if vehicle.transmission == 'CVT' %}selected{% endif %}>CVT</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="color" class="form-label">
+                                    <i class="fas fa-palette me-2"></i>Color
+                                </label>
+                                <input type="text" class="form-control" id="color" name="color" 
+                                       value="{{ vehicle.color or '' }}">
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label for="description" class="form-label">
+                                    <i class="fas fa-align-left me-2"></i>Descripción *
+                                </label>
+                                <textarea class="form-control" id="description" name="description" 
+                                          rows="5" required>{{ vehicle.description }}</textarea>
+                                <div class="invalid-feedback">Por favor ingresa una descripción.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Images (Only for Plus plans) -->
+                {% set current_images = vehicle.get_images_list() %}
+                {% if current_images %}
+                <div class="card mb-4" id="currentImagesSection" style="display: {{ 'block' if vehicle.is_plus else 'none' }};">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-images me-2"></i>Imágenes Actuales
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for image in current_images %}
+                                <div class="col-md-3 mb-3">
+                                    <img src="{{ image }}" class="img-fluid rounded" style="height: 150px; width: 100%; object-fit: cover;">
+                                    <div class="text-center mt-1">
+                                        <small class="text-muted">Imagen {{ loop.index }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Replace Images Section (Only for Plus plans) -->
+                <div class="card mb-4" id="replaceImagesSection" style="display: {{ 'block' if vehicle.is_plus else 'none' }};">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-image me-2"></i>Cambiar Imágenes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <p class="text-muted mb-3">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Selecciona nuevas imágenes para reemplazar las actuales. Si no seleccionas ninguna, se mantendrán las imágenes actuales.
+                            </p>
+                            
+                            <div class="input-group">
+                                <input type="file" class="form-control" 
+                                       id="vehicle_images" name="vehicle_images" 
+                                       accept="image/*" multiple>
+                                <label class="input-group-text" for="vehicle_images">
+                                    <i class="fas fa-camera me-1"></i>Seleccionar Nuevas Imágenes
+                                </label>
+                            </div>
+                            <div class="form-text">Máximo 16MB por imagen. Las nuevas imágenes reemplazarán completamente las actuales.</div>
+                        </div>
+                        
+                        <!-- Preview area -->
+                        <div class="mt-4">
+                            <h6 class="fw-bold mb-3">Vista previa de nuevas imágenes:</h6>
+                            <div class="row" id="imagePreviewContainer">
+                                <!-- Las previews aparecerán aquí -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact & Actions -->
+            <div class="col-lg-4">
+                <!-- Plan Type -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-crown me-2"></i>Tipo de Plan
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="is_plus" class="form-label">
+                                <i class="fas fa-star me-2"></i>Plan de Publicación *
+                            </label>
+                            <select class="form-select" id="is_plus" name="is_plus" required>
+                                <option value="false" {% if not vehicle.is_plus %}selected{% endif %}>
+                                    <i class="fas fa-gift me-1"></i>Plan Gratuito
+                                </option>
+                                <option value="true" {% if vehicle.is_plus %}selected{% endif %}>
+                                    <i class="fas fa-crown me-1"></i>Plan Plus (Premium)
+                                </option>
+                            </select>
+                            <div class="form-text">
+                                <strong>Plan Gratuito:</strong> Sin imágenes, visibilidad limitada<br>
+                                <strong>Plan Plus:</strong> Con imágenes, visibilidad premium
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info" id="planInfoAlert">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong id="planInfoTitle">Plan Premium Activo</strong><br>
+                            <small id="planInfoDescription">Este vehículo tiene visibilidad premium con imágenes.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-phone me-2"></i>Información de Contacto
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="whatsapp_number" class="form-label">
+                                    <i class="fab fa-whatsapp me-2"></i>Número de WhatsApp
+                                </label>
+                                <input type="tel" class="form-control" id="whatsapp_number" name="whatsapp_number" 
+                                       value="{{ vehicle.whatsapp_number or '' }}" placeholder="+5491112345678">
+                                <div class="form-text">
+                                    Formato: +54 9 11 1234-5678 (sin espacios ni guiones)
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="call_number" class="form-label">
+                                    <i class="fas fa-phone me-2"></i>Número de Llamada
+                                </label>
+                                <input type="tel" class="form-control" id="call_number" name="call_number" 
+                                       value="{{ vehicle.call_number or '' }}" placeholder="+5491112345678">
+                                <div class="form-text">
+                                    Formato: +54 9 11 1234-5678 (sin espacios ni guiones)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Información de Contacto:</strong> Puedes agregar uno o ambos números. 
+                            Se mostrarán los botones correspondientes según los números que proporciones.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="fas fa-save me-2"></i>Actualizar Vehículo
+                            </button>
+                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+// Image preview functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('vehicle_images');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    
+    imageInput.addEventListener('change', function(e) {
+        // Clear existing previews
+        previewContainer.innerHTML = '';
+        
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'col-md-3 mb-3';
+                    previewDiv.id = `preview-${index}`;
+                    
+                    previewDiv.innerHTML = `
+                        <div class="position-relative">
+                            <img src="${e.target.result}" class="img-fluid rounded" style="height: 150px; width: 100%; object-fit: cover;">
+                            <div class="text-center mt-1">
+                                <small class="text-muted">${file.name}</small>
+                            </div>
+                        </div>
+                    `;
+                    
+                    previewContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+});
+
+// Plan type change handler
+document.addEventListener('DOMContentLoaded', function() {
+    const planSelect = document.getElementById('is_plus');
+    const currentImagesSection = document.getElementById('currentImagesSection');
+    const replaceImagesSection = document.getElementById('replaceImagesSection');
+    const planInfoAlert = document.getElementById('planInfoAlert');
+    const planInfoTitle = document.getElementById('planInfoTitle');
+    const planInfoDescription = document.getElementById('planInfoDescription');
+    
+    function toggleImageSections() {
+        const isPlus = planSelect.value === 'true';
+        
+        // Mostrar/ocultar secciones de imágenes
+        if (currentImagesSection) {
+            currentImagesSection.style.display = isPlus ? 'block' : 'none';
+        }
+        
+        if (replaceImagesSection) {
+            replaceImagesSection.style.display = isPlus ? 'block' : 'none';
+        }
+        
+        // Actualizar alerta informativa
+        if (planInfoAlert && planInfoTitle && planInfoDescription) {
+            if (isPlus) {
+                planInfoAlert.className = 'alert alert-info';
+                planInfoTitle.textContent = 'Plan Premium Activo';
+                planInfoDescription.textContent = 'Este vehículo tiene visibilidad premium con imágenes.';
+            } else {
+                planInfoAlert.className = 'alert alert-warning';
+                planInfoTitle.textContent = 'Plan Gratuito';
+                planInfoDescription.textContent = 'Este vehículo no muestra imágenes y tiene visibilidad limitada.';
+            }
+        }
+        
+        // Si cambia a plan gratuito, limpiar las imágenes seleccionadas
+        if (!isPlus) {
+            const imageInput = document.getElementById('vehicle_images');
+            if (imageInput) {
+                imageInput.value = '';
+            }
+            
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            if (previewContainer) {
+                previewContainer.innerHTML = '';
+            }
+        }
+    }
+    
+    // Event listener para el cambio de plan
+    if (planSelect) {
+        planSelect.addEventListener('change', toggleImageSections);
+        
+        // Aplicar el estado inicial
+        toggleImageSections();
+    }
+});
+
+// Bootstrap form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}

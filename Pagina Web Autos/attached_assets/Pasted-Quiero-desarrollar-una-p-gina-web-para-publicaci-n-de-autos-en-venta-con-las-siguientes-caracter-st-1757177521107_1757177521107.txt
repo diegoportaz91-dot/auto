@@ -1,0 +1,52 @@
+Quiero desarrollar una página web para publicación de autos en venta, con las siguientes características:
+
+Perfiles de autos (visualización):
+
+Cada vehículo se visualizará en un perfil individual.
+
+El perfil debe mostrar todos los datos cargados del auto y un precio que pueda elegirse en USD o ARS al momento de la carga.
+
+El perfil debe incluir un botón para compartir el perfil, que genere y aporte la URL única del perfil.
+
+Publicación de autos por clientes:
+
+Los clientes que ingresen al sitio y quieran publicar su auto deben tener un acceso con el mensaje:
+¿Quieres publicar tu auto para vender? Enviar solicitud "Aquí" o Comunícate al +542604370925.
+
+El botón "Aquí" llevará al panel de carga de perfiles para clientes.
+
+Allí, el cliente podrá cargar un perfil de auto con los mismos campos que usa el administrador, pero la publicación no será automática, sino que generará una solicitud de autorización.
+
+Campos obligatorios en la carga de clientes:
+
+Nombre completo y DNI (para identificar clientes con varios autos publicados).
+
+Datos del vehículo (igual que el admin).
+
+Ubicación: seleccionar Tunuyán, Tupungato o San Carlos.
+
+Campo “domicilio” opcional.
+
+Precio en USD o ARS.
+
+Panel de administrador:
+
+Debe tener una sección privada con un listado de autos pendientes de autorización (sólo visible para el admin).
+
+El admin debe poder:
+
+Autorizar o rechazar solicitudes de autos.
+
+Editar/modificar cualquier perfil solicitado antes de publicarlo.
+
+Ver y controlar cuántos autos tiene cada cliente publicado, usando nombre completo y DNI como referencia.
+
+Además, en cada perfil pendiente o publicado, tener la opción de contactar al cliente por WhatsApp (por si no sabe cargar bien los datos).
+
+Funcionamiento general:
+
+Los clientes no deben registrarse en la página.
+
+El flujo es: el cliente solicita publicar un auto → completa datos → llega solicitud al admin → el admin autoriza o edita → se publica el perfil.
+
+El sistema debe permitir compartir perfiles por URL única y mostrar precios en USD/ARS según elección al cargar.

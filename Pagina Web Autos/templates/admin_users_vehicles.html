@@ -1,0 +1,595 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios y Vehículos - Panel Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-6 fw-bold">
+                        <i class="fas fa-users me-3 text-primary"></i>Usuarios y Vehículos
+                    </h1>
+                    <p class="text-muted">Gestiona usuarios y el estado de sus publicaciones</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left me-2"></i>Volver al Panel
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger" 
+                       onclick="return confirm('¿Estás seguro de que quieres cerrar sesión?')">
+                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="searchInput" 
+                                       placeholder="Buscar por nombre, teléfono, vehículo, marca, modelo...">
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <button class="btn btn-outline-secondary" id="clearSearch">
+                                <i class="fas fa-times me-2"></i>Limpiar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if owners %}
+        <!-- Users and Vehicles List -->
+        {% for owner_name, owner_data in owners.items() %}
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user me-2"></i>{{ owner_name }}
+                            </h5>
+                            <small>
+                                <i class="fas fa-phone me-1"></i>{{ owner_data.client_data.phone_number }} |
+                                <i class="fas fa-map-marker-alt me-1"></i>{{ owner_data.client_data.location }}
+                                {% if owner_data.client_data.address %}
+                                    | {{ owner_data.client_data.address }}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <span class="badge bg-light text-dark fs-6">
+                                {{ owner_data.vehicles|length }} vehículo{{ 's' if owner_data.vehicles|length != 1 else '' }}
+                            </span>
+                            <a href="{{ owner_data.client_data.get_whatsapp_contact_url() }}" 
+                               target="_blank" 
+                               class="btn btn-success btn-sm ms-2">
+                                <i class="fab fa-whatsapp me-1"></i>WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Vehículo</th>
+                                    <th>Precio</th>
+                                    <th>Tipo</th>
+                                    <th>Estado</th>
+                                    <th>Duración Premium</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vehicle in owner_data.vehicles %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if vehicle.is_plus and vehicle.get_main_image() %}
+                                                    <img src="{{ vehicle.get_main_image() }}" 
+                                                         class="rounded me-3" 
+                                                         style="width: 60px; height: 45px; object-fit: cover;"
+                                                         alt="{{ vehicle.title }}"
+                                                         onerror="this.src='https://via.placeholder.com/60x45?text=No+Image'">
+                                                {% else %}
+                                                    <div class="rounded me-3 d-flex align-items-center justify-content-center bg-light border" 
+                                                         style="width: 60px; height: 45px;">
+                                                        <i class="fas fa-car text-muted"></i>
+                                                    </div>
+                                                {% endif %}
+                                                <div>
+                                                    <h6 class="mb-1">{{ vehicle.title }}</h6>
+                                                    {% if vehicle.year or vehicle.brand %}
+                                                        <small class="text-muted">
+                                                            {% if vehicle.year %}{{ vehicle.year }}{% endif %}
+                                                            {% if vehicle.brand %} {{ vehicle.brand }}{% endif %}
+                                                            {% if vehicle.model %} {{ vehicle.model }}{% endif %}
+                                                        </small>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold {{ vehicle.get_currency_class() }}">
+                                                {{ vehicle.format_price_with_currency() }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if vehicle.is_plus %}
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="fas fa-star me-1"></i>Plus
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">
+                                                    <i class="fas fa-tag me-1"></i>Gratuito
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if vehicle.is_active %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-eye me-1"></i>Activo
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-danger">
+                                                    <i class="fas fa-eye-slash me-1"></i>Pausado
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if vehicle.is_plus %}
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <select class="form-select form-select-sm" 
+                                                            style="width: 80px;" 
+                                                            onchange="updatePremiumDuration({{ vehicle.id }}, this.value)">
+                                                        {% for i in range(1, 13) %}
+                                                            <option value="{{ i }}" 
+                                                                    {% if vehicle.premium_duration_months == i %}selected{% endif %}>
+                                                                {{ i }}m
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <div class="text-center">
+                                                        {% if vehicle.premium_expires_at %}
+                                                            {% set days_left = (vehicle.premium_expires_at - now).days %}
+                                                            {% if days_left > 0 %}
+                                                                <small class="text-success d-block">{{ days_left }}d</small>
+                                                            {% else %}
+                                                                <small class="text-danger d-block">Expirado</small>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        <small class="text-muted" id="time-counter-{{ vehicle.id }}">
+                                                            <i class="fas fa-clock me-1"></i>
+                                                            <span class="time-display" data-created="{{ vehicle.created_at.isoformat() }}">
+                                                                Cargando...
+                                                            </span>
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <div class="text-center">
+                                                    <span class="text-muted">-</span>
+                                                    <small class="text-muted d-block" id="time-counter-{{ vehicle.id }}">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        <span class="time-display" data-created="{{ vehicle.created_at.isoformat() }}">
+                                                            Cargando...
+                                                        </span>
+                                                    </small>
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">{{ vehicle.created_at.strftime('%d/%m/%Y') }}</small>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ url_for('vehicle_detail', id=vehicle.id) }}" 
+                                                   target="_blank"
+                                                   class="btn btn-outline-primary btn-sm"
+                                                   title="Ver publicación">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ url_for('edit_vehicle', id=vehicle.id) }}" 
+                                                   class="btn btn-outline-info btn-sm"
+                                                   title="Editar vehículo">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{{ url_for('toggle_vehicle_status', vehicle_id=vehicle.id) }}" 
+                                                   class="btn btn-outline-{% if vehicle.is_active %}warning{% else %}success{% endif %} btn-sm"
+                                                   onclick="return confirm('¿Cambiar el estado de este vehículo?')"
+                                                   title="{% if vehicle.is_active %}Pausar{% else %}Activar{% endif %}">
+                                                    <i class="fas fa-{% if vehicle.is_active %}pause{% else %}play{% endif %}"></i>
+                                                </a>
+                                                <button type="button" 
+                                                        class="btn btn-outline-danger btn-sm"
+                                                        onclick="confirmDeleteVehicle({{ vehicle.id }}, '{{ vehicle.brand }} {{ vehicle.model }}')"
+                                                        title="Eliminar vehículo">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <!-- No Users Message -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-users fa-4x text-muted mb-4"></i>
+                        <h4 class="text-muted mb-3">No hay usuarios con vehículos publicados</h4>
+                        <p class="text-muted mb-4">
+                            Cuando se aprueben solicitudes de clientes, sus vehículos aparecerán aquí agrupados por usuario.
+                        </p>
+                        <a href="{{ url_for('admin_pending_requests') }}" class="btn btn-primary">
+                            <i class="fas fa-clock me-2"></i>Ver Solicitudes Pendientes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.table th {
+    border-top: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.btn-group-sm .btn {
+    font-size: 0.8rem;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.table-responsive {
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.search-highlight {
+    background-color: #fff3cd;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.no-results {
+    display: none;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearch');
+    const userCards = document.querySelectorAll('.card.mb-4');
+    
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        
+        if (searchTerm === '') {
+            // Show all cards
+            userCards.forEach(card => {
+                card.style.display = 'block';
+                removeHighlights(card);
+            });
+            return;
+        }
+        
+        let hasResults = false;
+        
+        userCards.forEach(card => {
+            const cardText = card.textContent.toLowerCase();
+            const matches = cardText.includes(searchTerm);
+            
+            if (matches) {
+                card.style.display = 'block';
+                highlightSearchTerm(card, searchTerm);
+                hasResults = true;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Show/hide no results message
+        showNoResults(!hasResults);
+    });
+    
+    // Clear search
+    clearSearchBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        userCards.forEach(card => {
+            card.style.display = 'block';
+            removeHighlights(card);
+        });
+        showNoResults(false);
+    });
+    
+    function highlightSearchTerm(card, searchTerm) {
+        const textNodes = getTextNodes(card);
+        textNodes.forEach(node => {
+            const text = node.textContent;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            if (regex.test(text)) {
+                const highlightedText = text.replace(regex, '<span class="search-highlight">$1</span>');
+                const wrapper = document.createElement('span');
+                wrapper.innerHTML = highlightedText;
+                node.parentNode.replaceChild(wrapper, node);
+            }
+        });
+    }
+    
+    function removeHighlights(card) {
+        const highlights = card.querySelectorAll('.search-highlight');
+        highlights.forEach(highlight => {
+            const parent = highlight.parentNode;
+            parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+            parent.normalize();
+        });
+    }
+    
+    function getTextNodes(element) {
+        const textNodes = [];
+        const walker = document.createTreeWalker(
+            element,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode: function(node) {
+                    // Skip text nodes that are inside script or style tags
+                    const parent = node.parentElement;
+                    if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE')) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            }
+        );
+        
+        let node;
+        while (node = walker.nextNode()) {
+            if (node.textContent.trim()) {
+                textNodes.push(node);
+            }
+        }
+        
+        return textNodes;
+    }
+    
+    function showNoResults(show) {
+        let noResultsDiv = document.getElementById('noResultsMessage');
+        
+        if (show && !noResultsDiv) {
+            noResultsDiv = document.createElement('div');
+            noResultsDiv.id = 'noResultsMessage';
+            noResultsDiv.className = 'card';
+            noResultsDiv.innerHTML = `
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-search fa-4x text-muted mb-4"></i>
+                    <h4 class="text-muted mb-3">No se encontraron resultados</h4>
+                    <p class="text-muted mb-4">Intenta con otros términos de búsqueda</p>
+                    <button class="btn btn-outline-secondary" onclick="document.getElementById('searchInput').value=''; document.getElementById('clearSearch').click();">
+                        <i class="fas fa-times me-2"></i>Limpiar búsqueda
+                    </button>
+                </div>
+            `;
+            
+            const container = document.querySelector('.container');
+            container.appendChild(noResultsDiv);
+        } else if (!show && noResultsDiv) {
+            noResultsDiv.remove();
+        }
+    }
+    
+    // Update premium duration
+    function updatePremiumDuration(vehicleId, months) {
+        fetch(`/admin/update-premium-duration/${vehicleId}/${months}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                alertDiv.style.top = '20px';
+                alertDiv.style.right = '20px';
+                alertDiv.style.zIndex = '9999';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-check me-2"></i>Duración premium actualizada a ${months} meses
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(alertDiv);
+                
+                // Auto remove after 3 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 3000);
+                
+                // Reload page to show updated data
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                alert('Error al actualizar la duración premium');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al actualizar la duración premium');
+        });
+    }
+    
+    // Time counter functionality
+    function updateTimeCounters() {
+        document.querySelectorAll('.time-display').forEach(element => {
+            const createdDate = new Date(element.getAttribute('data-created'));
+            const now = new Date();
+            const diffMs = now - createdDate;
+            
+            const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            
+            let timeString = '';
+            if (days > 0) {
+                timeString += `${days}d `;
+            }
+            if (hours > 0) {
+                timeString += `${hours}h `;
+            }
+            if (minutes > 0) {
+                timeString += `${minutes}m`;
+            }
+            
+            if (timeString === '') {
+                timeString = '0m';
+            }
+            
+            element.textContent = timeString.trim();
+        });
+    }
+    
+    // Update counters immediately and then every minute
+    updateTimeCounters();
+    setInterval(updateTimeCounters, 60000); // Update every minute
+    
+    // Delete vehicle functionality
+    let vehicleToDeleteId = null;
+    
+    function confirmDeleteVehicle(vehicleId, vehicleName) {
+        console.log('confirmDeleteVehicle called with:', vehicleId, vehicleName);
+        vehicleToDeleteId = vehicleId;
+        document.getElementById('vehicleToDelete').textContent = vehicleName;
+        const modal = new bootstrap.Modal(document.getElementById('deleteVehicleModal'));
+        modal.show();
+    }
+    
+    // Handle confirm delete button
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+        if (vehicleToDeleteId) {
+            deleteVehicle(vehicleToDeleteId);
+        }
+    });
+    
+    function deleteVehicle(vehicleId) {
+        console.log('deleteVehicle called with:', vehicleId);
+        fetch(`/admin/delete-vehicle/${vehicleId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                alertDiv.style.top = '20px';
+                alertDiv.style.right = '20px';
+                alertDiv.style.zIndex = '9999';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-check me-2"></i>Vehículo eliminado correctamente
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(alertDiv);
+                
+                // Auto remove after 3 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 3000);
+                
+                // Close modal and reload page
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteVehicleModal'));
+                modal.hide();
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                alert('Error al eliminar el vehículo: ' + (data.error || 'Error desconocido'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al eliminar el vehículo');
+        });
+    }
+});
+</script>
+
+<!-- Modal de Confirmación para Eliminar Vehículo -->
+<div class="modal fade" id="deleteVehicleModal" tabindex="-1" aria-labelledby="deleteVehicleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteVehicleModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-warning me-2"></i>
+                    <strong>¡Atención!</strong> Esta acción no se puede deshacer.
+                </div>
+                <p>¿Estás seguro de que quieres eliminar el vehículo:</p>
+                <div class="bg-light p-3 rounded">
+                    <strong id="vehicleToDelete"></strong>
+                </div>
+                <p class="text-muted mt-3">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Se eliminarán todas las imágenes asociadas y la información del vehículo de forma permanente.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash me-2"></i>Eliminar Definitivamente
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

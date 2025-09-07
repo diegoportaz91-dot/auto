@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Vehículo - AutoMarket Argentina{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-6 fw-bold">
+                        <i class="fas fa-plus-circle me-3 text-success"></i>Agregar Vehículo
+                    </h1>
+                    <p class="text-muted">Completa la información del vehículo</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left me-2"></i>Volver al Panel
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger" 
+                       onclick="return confirm('¿Estás seguro de que quieres cerrar sesión?')">
+                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <div class="row">
+            <!-- Basic Information -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Información Básica
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label for="title" class="form-label">
+                                    <i class="fas fa-heading me-2"></i>Título del Anuncio *
+                                </label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       placeholder="Ej: Toyota Corolla 2020 - Excelente Estado" required>
+                                <div class="invalid-feedback">Por favor ingresa un título.</div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="price" class="form-label">
+                                    <i class="fas fa-dollar-sign me-2"></i>Precio *
+                                </label>
+                                <input type="number" class="form-control" id="price" name="price" 
+                                       placeholder="2500000" min="1" required>
+                                <div class="invalid-feedback">Por favor ingresa un precio válido.</div>
+                            </div>
+                            
+                            <div class="col-md-2 mb-3">
+                                <label for="currency" class="form-label">
+                                    <i class="fas fa-coins me-2"></i>Moneda *
+                                </label>
+                                <select class="form-select" id="currency" name="currency" required>
+                                    <option value="ARS" selected>ARS</option>
+                                    <option value="USD">USD</option>
+                                </select>
+                                <div class="invalid-feedback">Selecciona la moneda.</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="year" class="form-label">
+                                    <i class="fas fa-calendar me-2"></i>Año
+                                </label>
+                                <input type="number" class="form-control" id="year" name="year" 
+                                       placeholder="2020" min="1900" max="2025">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="brand" class="form-label">
+                                    <i class="fas fa-tag me-2"></i>Marca
+                                </label>
+                                <input type="text" class="form-control" id="brand" name="brand" 
+                                       placeholder="Toyota">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="model" class="form-label">
+                                    <i class="fas fa-car me-2"></i>Modelo
+                                </label>
+                                <input type="text" class="form-control" id="model" name="model" 
+                                       placeholder="Corolla">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="kilometers" class="form-label">
+                                    <i class="fas fa-road me-2"></i>Kilómetros
+                                </label>
+                                <input type="number" class="form-control" id="kilometers" name="kilometers" 
+                                       placeholder="50000" min="0">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="fuel_type" class="form-label">
+                                    <i class="fas fa-gas-pump me-2"></i>Combustible
+                                </label>
+                                <select class="form-select" id="fuel_type" name="fuel_type">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="Nafta">Nafta</option>
+                                    <option value="Diesel">Diesel</option>
+                                    <option value="GNC">GNC</option>
+                                    <option value="Híbrido">Híbrido</option>
+                                    <option value="Eléctrico">Eléctrico</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="transmission" class="form-label">
+                                    <i class="fas fa-cogs me-2"></i>Transmisión
+                                </label>
+                                <select class="form-select" id="transmission" name="transmission">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="Manual">Manual</option>
+                                    <option value="Automática">Automática</option>
+                                    <option value="CVT">CVT</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="color" class="form-label">
+                                    <i class="fas fa-palette me-2"></i>Color
+                                </label>
+                                <input type="text" class="form-control" id="color" name="color" 
+                                       placeholder="Blanco">
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label for="description" class="form-label">
+                                    <i class="fas fa-align-left me-2"></i>Descripción *
+                                </label>
+                                <textarea class="form-control" id="description" name="description" 
+                                          rows="5" placeholder="Describe detalladamente el vehículo, su estado, equipamiento, etc." required></textarea>
+                                <div class="invalid-feedback">Por favor ingresa una descripción.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Images Section -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-images me-2"></i>Imágenes del Vehículo
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <p class="text-muted mb-3">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Puedes agregar todas las imágenes que quieras desde tu computadora. Formatos permitidos: JPG, PNG, WEBP, GIF.
+                            </p>
+                            
+                            <div class="input-group">
+                                <input type="file" class="form-control" 
+                                       id="vehicle_images" name="vehicle_images" 
+                                       accept="image/*" multiple>
+                                <label class="input-group-text" for="vehicle_images">
+                                    <i class="fas fa-camera me-1"></i>Seleccionar Imágenes
+                                </label>
+                            </div>
+                            <div class="form-text">Máximo 16MB por imagen. Selecciona múltiples archivos manteniendo presionada la tecla Ctrl/Cmd.</div>
+                        </div>
+                        
+                        <!-- Preview area -->
+                        <div class="mt-4">
+                            <h6 class="fw-bold mb-3">Vista previa de imágenes:</h6>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Imagen Principal:</strong> Haz clic en una imagen para seleccionarla como imagen principal del perfil.
+                            </div>
+                            <div class="row" id="imagePreviewContainer">
+                                <!-- Las previews aparecerán aquí -->
+                            </div>
+                            <input type="hidden" id="main_image_index" name="main_image_index" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact & Actions -->
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-phone me-2"></i>Información de Contacto
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="whatsapp_number" class="form-label">
+                                    <i class="fab fa-whatsapp me-2"></i>Número de WhatsApp
+                                </label>
+                                <input type="tel" class="form-control" id="whatsapp_number" name="whatsapp_number" 
+                                       placeholder="+5491112345678">
+                                <div class="form-text">
+                                    Formato: +54 9 11 1234-5678 (sin espacios ni guiones)
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="call_number" class="form-label">
+                                    <i class="fas fa-phone me-2"></i>Número de Llamada
+                                </label>
+                                <input type="tel" class="form-control" id="call_number" name="call_number" 
+                                       placeholder="+5491112345678">
+                                <div class="form-text">
+                                    Formato: +54 9 11 1234-5678 (sin espacios ni guiones)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Información de Contacto:</strong> Puedes agregar uno o ambos números. 
+                            Se mostrarán los botones correspondientes según los números que proporciones.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save me-2"></i>Publicar Vehículo
+                            </button>
+                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+.main-image-selected {
+    border: 3px solid #28a745 !important;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5) !important;
+}
+
+.preview-image:hover {
+    border: 2px solid #007bff !important;
+    transition: all 0.3s ease;
+}
+</style>
+
+<script>
+// Image preview functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('vehicle_images');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    
+    imageInput.addEventListener('change', function(e) {
+        // Clear existing previews
+        previewContainer.innerHTML = '';
+        
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'col-md-3 mb-3';
+                    previewDiv.id = `preview-${index}`;
+                    
+                    previewDiv.innerHTML = `
+                        <div class="position-relative">
+                            <img src="${e.target.result}" 
+                                 class="img-fluid rounded preview-image ${index === 0 ? 'main-image-selected' : ''}" 
+                                 style="height: 150px; width: 100%; object-fit: cover; cursor: pointer;"
+                                 onclick="selectMainImage(${index})"
+                                 data-index="${index}">
+                            <div class="position-absolute top-0 end-0 p-1">
+                                <button type="button" class="btn btn-sm btn-danger" onclick="removePreview(${index})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="position-absolute top-0 start-0 p-1">
+                                ${index === 0 ? '<span class="badge bg-success"><i class="fas fa-star me-1"></i>Principal</span>' : ''}
+                            </div>
+                            <div class="text-center mt-1">
+                                <small class="text-muted">${file.name}</small>
+                            </div>
+                        </div>
+                    `;
+                    
+                    previewContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+});
+
+// Remove preview function
+function removePreview(imageIndex) {
+    const preview = document.getElementById(`preview-${imageIndex}`);
+    if (preview) preview.remove();
+    
+    // Note: For multiple file input, we can't remove individual files easily
+    // This just removes the preview, but the file will still be uploaded
+    // Users can reselect files if they want to remove specific ones
+}
+
+// Function to select main image
+function selectMainImage(index) {
+    const mainImageIndexInput = document.getElementById('main_image_index');
+    mainImageIndexInput.value = index;
+    
+    // Update visual indicators
+    document.querySelectorAll('.preview-image').forEach((img, i) => {
+        const previewDiv = img.closest('.col-md-3');
+        const badge = previewDiv.querySelector('.badge');
+        
+        if (i === index) {
+            img.classList.add('main-image-selected');
+            if (!badge) {
+                const badgeDiv = document.createElement('div');
+                badgeDiv.className = 'position-absolute top-0 start-0 p-1';
+                badgeDiv.innerHTML = '<span class="badge bg-success"><i class="fas fa-star me-1"></i>Principal</span>';
+                previewDiv.querySelector('.position-relative').appendChild(badgeDiv);
+            }
+        } else {
+            img.classList.remove('main-image-selected');
+            if (badge) {
+                badge.remove();
+            }
+        }
+    });
+}
+
+// Bootstrap form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}
